@@ -10,7 +10,8 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-  late String? email, username;
+  late String? email;
+  late String? username;
   TextEditingController bioTextController = TextEditingController();
 
   @override
@@ -28,16 +29,16 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
-  signOut() {
-    final AuthAPI appwrite = context.read<AuthAPI>();
-    appwrite.signOut();
-  }
-
   savePreferences() {
     final AuthAPI appwrite = context.read<AuthAPI>();
     appwrite.updatePreferences(bio: bioTextController.text);
     const snackbar = SnackBar(content: Text('Preferences updated!'));
     ScaffoldMessenger.of(context).showSnackBar(snackbar);
+  }
+
+  signOut() {
+    final AuthAPI appwrite = context.read<AuthAPI>();
+    appwrite.signOut();
   }
 
   @override

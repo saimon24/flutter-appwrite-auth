@@ -1,5 +1,5 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart' as model;
+import 'package:appwrite/models.dart';
 import 'package:appwrite_app/appwrite/auth_api.dart';
 import 'package:appwrite_app/constants/constants.dart';
 
@@ -22,14 +22,14 @@ class DatabaseAPI {
     databases = Databases(client);
   }
 
-  Future<model.DocumentList> getMessages() {
+  Future<DocumentList> getMessages() {
     return databases.listDocuments(
       databaseId: APPWRITE_DATABASE_ID,
       collectionId: COLLECTION_MESSAGES,
     );
   }
 
-  Future<model.Document> addMessage({required String message}) {
+  Future<Document> addMessage({required String message}) {
     return databases.createDocument(
         databaseId: APPWRITE_DATABASE_ID,
         collectionId: COLLECTION_MESSAGES,

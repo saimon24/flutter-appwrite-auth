@@ -1,16 +1,14 @@
-import 'package:appwrite_app/appwrite/auth_api.dart';
 import 'package:appwrite_app/pages/login_page.dart';
 import 'package:appwrite_app/pages/tabs_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'appwrite/auth_api.dart';
+
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => AuthAPI(),
-      child: const MyApp(),
-    ),
-  );
+  // runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: ((context) => AuthAPI()), child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

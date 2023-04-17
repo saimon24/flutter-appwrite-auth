@@ -1,34 +1,36 @@
 import 'package:appwrite/appwrite.dart';
-import 'package:appwrite/models.dart' as model;
+import 'package:appwrite/models.dart';
 import 'package:appwrite_app/constants/constants.dart';
 import 'package:flutter/widgets.dart';
 
 enum AuthStatus {
   uninitialized,
   authenticated,
-  authenticating,
   unauthenticated,
 }
 
 class AuthAPI extends ChangeNotifier {
   Client client = Client();
   late final Account account;
-  bool _loading = true;
-  AuthStatus _status = AuthStatus.uninitialized;
-  late model.Account? _currentUser;
 
-  model.Account? get currentUser => _currentUser;
+  late User _currentUser;
+
+  AuthStatus _status = AuthStatus.uninitialized;
+
+  // Getter methods
+  User get currentUser => _currentUser;
   AuthStatus get status => _status;
-  bool get loading => _loading;
   String? get username => _currentUser?.name;
   String? get email => _currentUser?.email;
   String? get userid => _currentUser?.$id;
 
+  // Constructor
   AuthAPI() {
     init();
     loadUser();
   }
 
+  // Initialize the Appwrite client
   init() {
     client
         .setEndpoint(APPWRITE_URL)
@@ -42,19 +44,15 @@ class AuthAPI extends ChangeNotifier {
       final user = await account.get();
       _status = AuthStatus.authenticated;
       _currentUser = user;
-    } on AppwriteException catch (e) {
+    } catch (e) {
       _status = AuthStatus.unauthenticated;
     } finally {
-      _loading = false;
       notifyListeners();
     }
   }
 
-  Future<model.Account> createUser(
+  Future<User> createUser(
       {required String email, required String password}) async {
-    _loading = true;
-    notifyListeners();
-
     try {
       final user = await account.create(
           userId: ID.unique(),
@@ -63,16 +61,12 @@ class AuthAPI extends ChangeNotifier {
           name: 'Simon G');
       return user;
     } finally {
-      _loading = false;
       notifyListeners();
     }
   }
 
-  Future<model.Session> createEmailSession(
+  Future<Session> createEmailSession(
       {required String email, required String password}) async {
-    _loading = true;
-    notifyListeners();
-
     try {
       final session =
           await account.createEmailSession(email: email, password: password);
@@ -80,7 +74,17 @@ class AuthAPI extends ChangeNotifier {
       _status = AuthStatus.authenticated;
       return session;
     } finally {
-      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  signInWithProvider({required String provider}) async {
+    try {
+      final session = await account.createOAuth2Session(provider: provider);
+      _currentUser = await account.get();
+      _status = AuthStatus.authenticated;
+      return session;
+    } finally {
       notifyListeners();
     }
   }
@@ -94,24 +98,11 @@ class AuthAPI extends ChangeNotifier {
     }
   }
 
-  Future<model.Preferences> getUserPreferences() async {
+  Future<Preferences> getUserPreferences() async {
     return await account.getPrefs();
   }
 
   updatePreferences({required String bio}) async {
     return account.updatePrefs(prefs: {'bio': bio});
-  }
-
-  signInWithProvider({required String provider}) async {
-    // appwrite sign in with github
-    try {
-      final session = await account.createOAuth2Session(provider: provider);
-      _currentUser = await account.get();
-      _status = AuthStatus.authenticated;
-      return session;
-    } finally {
-      _loading = false;
-      notifyListeners();
-    }
   }
 }

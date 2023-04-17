@@ -2,7 +2,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:appwrite_app/appwrite/auth_api.dart';
 import 'package:appwrite_app/appwrite/database_api.dart';
 import 'package:flutter/material.dart';
-import 'package:appwrite/models.dart' as model;
+import 'package:appwrite/models.dart';
 import 'package:provider/provider.dart';
 
 class MessagesPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class MessagesPage extends StatefulWidget {
 
 class _MessagesPageState extends State<MessagesPage> {
   final database = DatabaseAPI();
-  late List<model.Document>? messages = [];
+  late List<Document>? messages = [];
   TextEditingController messageTextController = TextEditingController();
   AuthStatus authStatus = AuthStatus.uninitialized;
 
